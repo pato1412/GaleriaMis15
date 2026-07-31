@@ -1,0 +1,207 @@
+:root {
+  --rosa-fuerte: #ff4fa3;
+  --rosa: #ff8fc4;
+  --rosa-claro: #ffd7ea;
+  --plateado: #c8ccd4;
+  --plateado-claro: #eef0f3;
+  --plateado-oscuro: #9aa0ab;
+  --texto: #3a2c35;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--plateado-claro) 0%, #ffffff 35%, var(--rosa-claro) 100%);
+  color: var(--texto);
+  font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.app-shell {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 0 6.5rem 0; /* deja lugar para el boton fijo de abajo */
+  min-height: 100vh;
+}
+
+/* ---------- Header (compacto) ---------- */
+.hero {
+  position: relative;
+  text-align: center;
+  background: linear-gradient(135deg, var(--plateado) 0%, var(--rosa) 55%, var(--rosa-fuerte) 100%);
+  color: #fff;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 6px 18px rgba(255, 79, 163, 0.22);
+  overflow: hidden;
+}
+
+.hero-compact {
+  padding: 1.1rem 1.5rem 1rem;
+}
+
+.hero::before,
+.hero::after {
+  content: "✦";
+  position: absolute;
+  font-size: 1.4rem;
+  opacity: 0.35;
+  color: #fff;
+}
+.hero::before { top: 8px; left: 16px; }
+.hero::after { bottom: 8px; right: 16px; }
+
+.hero-title {
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-size: 2.1rem;
+  margin: 0;
+  line-height: 1.1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  letter-spacing: 1px;
+}
+
+.hero-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+
+/* ---------- Gallery / mosaico (pantalla principal) ---------- */
+.gallery-title {
+  text-align: center;
+  margin: 1.2rem 0 1rem;
+  font-weight: 700;
+  color: var(--rosa-fuerte);
+}
+
+.mosaic {
+  column-count: 2;
+  column-gap: 10px;
+  padding: 0 12px;
+}
+@media (min-width: 600px) {
+  .mosaic { column-count: 3; }
+}
+@media (min-width: 900px) {
+  .mosaic { column-count: 4; }
+}
+
+.mosaic-item {
+  break-inside: avoid;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(154, 160, 171, 0.3);
+  position: relative;
+  cursor: pointer;
+}
+.mosaic-item img {
+  width: 100%;
+  display: block;
+  transition: transform 0.25s ease;
+}
+.mosaic-item:hover img {
+  transform: scale(1.04);
+}
+
+.scroll-sentinel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px;
+  padding: 1rem 0 0.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--plateado-oscuro);
+  padding: 3rem 1rem;
+}
+
+.footer-note {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--plateado-oscuro);
+  font-size: 0.85rem;
+}
+
+/* ---------- Botón fijo de subir foto ---------- */
+.fab-subir {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 1.8rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--rosa-fuerte), var(--rosa));
+  box-shadow: 0 10px 26px rgba(255, 79, 163, 0.45);
+  transition: transform 0.15s ease;
+}
+.fab-subir:active {
+  transform: translateX(-50%) scale(0.97);
+}
+
+/* ---------- Modal / popup de subida ---------- */
+.modal-fiesta .modal-content {
+  border-radius: 24px;
+  border: none;
+  overflow: hidden;
+}
+.modal-fiesta .modal-header {
+  background: linear-gradient(135deg, var(--plateado-claro), var(--rosa-claro));
+  border-bottom: none;
+}
+
+.btn-fiesta {
+  background: linear-gradient(135deg, var(--rosa-fuerte), var(--rosa));
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.75rem 1.4rem;
+  box-shadow: 0 6px 16px rgba(255, 79, 163, 0.35);
+  transition: transform 0.15s ease;
+}
+.btn-fiesta:hover, .btn-fiesta:focus {
+  background: linear-gradient(135deg, var(--rosa), var(--rosa-fuerte));
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-plateado {
+  background: linear-gradient(135deg, var(--plateado-oscuro), var(--plateado));
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.75rem 1.4rem;
+}
+.btn-plateado:hover, .btn-plateado:focus {
+  color: #fff;
+  opacity: 0.92;
+}
+
+.preview-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.preview-img {
+  max-height: 260px;
+  max-width: 100%;
+  border-radius: 16px;
+  border: 4px solid var(--rosa-claro);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
