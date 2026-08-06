@@ -39,16 +39,22 @@ export default function Gallery({ photos, loadingInitial, loadingMore, hasMore, 
 
   return (
     <>
+      {/* Grid en orden de lectura (izquierda a derecha, arriba a abajo).
+          La primera foto (la más reciente) queda destacada arriba de todo. */}
       <div className="mosaic">
-        {photos.map((photo) => (
-          <div
-            key={photo.filename}
-            className="mosaic-item"
-            onClick={() => setSelected(photo)}
-          >
-            <img src={getPhotoUrl(photo.url)} alt="Foto de la fiesta" loading="lazy" />
-          </div>
-        ))}
+        {photos.map((photo, index) => {
+          const esDestacada = index === 0;
+          return (
+            <div
+              key={photo.filename}
+              className={`polaroid${esDestacada ? " destacada" : ""}`}
+              onClick={() => setSelected(photo)}
+            >
+              {esDestacada && <span className="polaroid-badge">Recién subida ✨</span>}
+              <img src={getPhotoUrl(photo.url)} alt="Foto de la fiesta" loading="lazy" />
+            </div>
+          );
+        })}
       </div>
 
       <div ref={sentinelRef} className="scroll-sentinel">

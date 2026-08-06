@@ -80,33 +80,67 @@ body {
 }
 
 .mosaic {
-  column-count: 2;
-  column-gap: 10px;
-  padding: 0 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 0 14px;
 }
-@media (min-width: 600px) {
-  .mosaic { column-count: 3; }
-}
-@media (min-width: 900px) {
-  .mosaic { column-count: 4; }
+@media (min-width: 480px) {
+  .mosaic { grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 0 16px; }
 }
 
-.mosaic-item {
-  break-inside: avoid;
-  margin-bottom: 10px;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 14px rgba(154, 160, 171, 0.3);
-  position: relative;
+/* Cada foto con marco tipo Polaroid: fondo blanco, margen mayor abajo */
+.polaroid {
+  background: #fff;
+  padding: 8px 8px 22px 8px;
+  border-radius: 3px;
+  box-shadow: 0 4px 14px rgba(154, 160, 171, 0.35);
   cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease;
 }
-.mosaic-item img {
+.polaroid:active {
+  transform: scale(0.97);
+}
+.polaroid img {
   width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
   display: block;
-  transition: transform 0.25s ease;
+  border-radius: 1px;
 }
-.mosaic-item:hover img {
-  transform: scale(1.04);
+
+/* Leve inclinación alternada para look de fotos apiladas, salvo en la destacada */
+.polaroid:nth-child(3n+2) { transform: rotate(-1.5deg); }
+.polaroid:nth-child(3n+3) { transform: rotate(1.5deg); }
+.polaroid:nth-child(3n+2):active { transform: rotate(-1.5deg) scale(0.97); }
+.polaroid:nth-child(3n+3):active { transform: rotate(1.5deg) scale(0.97); }
+
+/* La foto más reciente ocupa todo el ancho y tiene marco propio */
+.polaroid.destacada {
+  grid-column: 1 / -1;
+  padding: 10px 10px 30px 10px;
+  border: 3px solid var(--rosa-fuerte);
+  box-shadow: 0 12px 32px rgba(255, 79, 163, 0.4);
+  transform: none !important;
+}
+.polaroid.destacada img {
+  aspect-ratio: 16 / 11;
+}
+.polaroid.destacada .polaroid-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--rosa-fuerte), var(--rosa));
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(255, 79, 163, 0.4);
+  white-space: nowrap;
 }
 
 .scroll-sentinel {
