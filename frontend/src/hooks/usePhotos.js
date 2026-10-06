@@ -63,6 +63,11 @@ export function usePhotos() {
     newestSeenRef.current = Math.max(newestSeenRef.current || 0, photo.uploadedAt);
   }, []);
 
+  // Saca una foto de la lista (usado por el panel de admin al borrarla)
+  const removePhoto = useCallback((filename) => {
+    setPhotos((prev) => prev.filter((p) => p.filename !== filename));
+  }, []);
+
   // Sondeo periodico de fotos nuevas subidas por otros invitados
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -92,5 +97,5 @@ export function usePhotos() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { photos, loadingInitial, loadingMore, hasMore, loadMore, prependPhoto };
+  return { photos, loadingInitial, loadingMore, hasMore, loadMore, prependPhoto, removePhoto };
 }

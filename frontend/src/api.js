@@ -2,6 +2,7 @@
 // se usa esa base. En desarrollo, el proxy de Vite redirige /api y /uploads
 // al backend en localhost:4000, asi que dejamos la base vacia.
 const API_BASE = import.meta.env.VITE_API_URL || "";
+const ADMIN_PASSWORD =  import.meta.env.VITE_ADMIN_PASSWORD;
 
 export function getPhotoUrl(relativeUrl) {
   return `${API_BASE}${relativeUrl}`;
@@ -51,4 +52,29 @@ export function uploadPhoto(file, onProgress) {
     xhr.onerror = () => reject(new Error("Error de red al subir la foto"));
     xhr.send(formData);
   });
+}
+
+// ---------- Admin / moderación ----------
+
+// Valida la contraseña contra el backend antes de mostrar el panel de admin.
+export async function adminLogin(password) {
+  if (password === ADMIN_PASSWORD) {
+    return true;
+  }else{
+    throw new Error("Contraseña incorrecta");
+  }
+ }
+
+// Borra una foto de la galería. Requiere la misma contraseña de admin.
+export async function deletePhoto(filename, password) {
+  const res = await fetch(`${API_BASE}/DeletePhoto/${encodeURIComponent(filename)}`, {
+    method: "DELETE",
+    headers: { "x-admin-password": password },
+    
+  });
+  if (!res.ok) {
+    if (res.status === 401) throw new Error("Contraseña incorrecta");
+    throw new Error("No se pudo borrar la foto");
+  }
+  return res.json();
 }

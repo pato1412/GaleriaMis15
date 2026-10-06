@@ -239,3 +239,125 @@ body {
   border: 4px solid var(--rosa-claro);
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
+
+/* ---------- Popup de foto ampliada (lightbox) ---------- */
+.modal-lightbox .modal-content {
+  background: transparent;
+  border: none;
+}
+.modal-lightbox .modal-body {
+  position: relative;
+}
+.btn-descargar {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.3rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--rosa-fuerte), var(--rosa));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+.btn-descargar:disabled {
+  opacity: 0.75;
+}
+
+/* ---------- Panel de admin (/admin) ---------- */
+.admin-shell {
+  max-width: 900px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 1rem;
+  background: #fff;
+  border-radius: 24px;
+  padding: 2rem 1.6rem;
+  box-shadow: 0 10px 30px rgba(154, 160, 171, 0.3);
+  text-align: center;
+}
+.admin-login-title {
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-size: 1.9rem;
+  color: var(--rosa-fuerte);
+  margin: 0;
+}
+.admin-login-subtitle {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--plateado-oscuro);
+  margin-bottom: 1.4rem;
+}
+.admin-back-link {
+  color: var(--plateado-oscuro);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.admin-back-link:hover {
+  color: var(--rosa-fuerte);
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1rem 0.6rem;
+}
+.admin-header-title {
+  margin: 0;
+  font-weight: 700;
+  color: var(--rosa-fuerte);
+  font-size: 1.2rem;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0.6rem 12px 0;
+}
+@media (min-width: 480px) {
+  .admin-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.admin-thumb {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(154, 160, 171, 0.3);
+}
+.admin-thumb img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+.admin-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+.admin-delete-btn:active {
+  background: var(--rosa-fuerte);
+}
