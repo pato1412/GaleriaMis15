@@ -361,3 +361,18 @@ body {
 .admin-delete-btn:active {
   background: var(--rosa-fuerte);
 }
+
+/* ---------- Botón manual de respaldo "Cargar más fotos" ---------- */
+.btn-cargar-mas {
+  border: 2px solid var(--rosa);
+  background: #fff;
+  color: var(--rosa-fuerte);
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  padding: 0.5rem 1.3rem;
+  margin: 0 0 1rem;
+}
+.btn-cargar-mas:active {
+  background: var(--rosa-claro);
+}

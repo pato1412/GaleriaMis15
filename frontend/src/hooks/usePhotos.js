@@ -9,10 +9,27 @@ export function usePhotos() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  // Cursor con la fecha de la foto mas vieja cargada (para pedir "mas antiguas")
+  // Cursor de la foto mas vieja cargada, para pedir "las siguientes" (mas
+  // antiguas). Se guarda como {ts, filename}: el nombre de archivo
+  // desempata cuando dos fotos comparten la misma fecha de modificacion
+  // (pasa si se copiaron varias juntas a la carpeta en vez de subirlas una
+  // por una), asi la paginacion nunca repite ni se salta fotos.
   const oldestCursorRef = useRef(null);
-  // Fecha de la foto mas nueva que ya vimos (para detectar fotos nuevas de otros)
+  // Cursor de la foto mas nueva que ya vimos, para detectar fotos nuevas
+  // subidas por otros invitados.
   const newestSeenRef = useRef(null);
+
+  // Espejo en refs de loadingMore/hasMore: loadMore los necesita para la
+  // validacion, pero si fueran dependencias del useCallback, la funcion
+  // cambiaria de identidad en cada carga. Eso hacia que el useEffect del
+  // centinela en Gallery/AdminPage desconectara y reconectara el
+  // IntersectionObserver todo el tiempo, y con cientos de fotos terminaba
+  // "comiendose" el aviso de que el centinela volvio a entrar en pantalla:
+  // el scroll infinito se quedaba pegado en la primera tanda. Con refs,
+  // loadMore mantiene SIEMPRE la misma identidad (deps: []) y el observer
+  // se crea una sola vez.
+  const loadingMoreRef = useRef(false);
+  const hasMoreRef = useRef(true);
 
   const loadInitial = useCallback(async () => {
     setLoadingInitial(true);
@@ -20,9 +37,12 @@ export function usePhotos() {
       const { items, hasMore: more } = await fetchPhotos({ limit: 20 });
       setPhotos(items);
       setHasMore(more);
+      hasMoreRef.current = more;
       if (items.length > 0) {
-        oldestCursorRef.current = items[items.length - 1].uploadedAt;
-        newestSeenRef.current = items[0].uploadedAt;
+        const ultima = items[items.length - 1];
+        oldestCursorRef.current = { ts: ultima.uploadedAt, filename: ultima.filename };
+        const primera = items[0];
+        newestSeenRef.current = { ts: primera.uploadedAt, filename: primera.filename };
       }
     } catch (err) {
       console.error(err);
@@ -32,24 +52,31 @@ export function usePhotos() {
   }, []);
 
   const loadMore = useCallback(async () => {
-    if (loadingMore || !hasMore || oldestCursorRef.current == null) return;
+    if (loadingMoreRef.current || !hasMoreRef.current || oldestCursorRef.current == null) {
+      return;
+    }
+    loadingMoreRef.current = true;
     setLoadingMore(true);
     try {
       const { items, hasMore: more } = await fetchPhotos({
-        before: oldestCursorRef.current,
+        before: oldestCursorRef.current.ts,
+        beforeFile: oldestCursorRef.current.filename,
         limit: 20,
       });
       if (items.length > 0) {
-        oldestCursorRef.current = items[items.length - 1].uploadedAt;
+        const ultima = items[items.length - 1];
+        oldestCursorRef.current = { ts: ultima.uploadedAt, filename: ultima.filename };
         setPhotos((prev) => [...prev, ...items]);
       }
+      hasMoreRef.current = more;
       setHasMore(more);
     } catch (err) {
       console.error(err);
     } finally {
+      loadingMoreRef.current = false;
       setLoadingMore(false);
     }
-  }, [loadingMore, hasMore]);
+  }, []);
 
   // Agrega al toque una foto recien subida por este mismo usuario, arriba de todo
   const prependPhoto = useCallback((photo) => {
@@ -58,9 +85,11 @@ export function usePhotos() {
       return [photo, ...prev];
     });
     if (oldestCursorRef.current == null) {
-      oldestCursorRef.current = photo.uploadedAt;
+      oldestCursorRef.current = { ts: photo.uploadedAt, filename: photo.filename };
     }
-    newestSeenRef.current = Math.max(newestSeenRef.current || 0, photo.uploadedAt);
+    if (!newestSeenRef.current || photo.uploadedAt >= newestSeenRef.current.ts) {
+      newestSeenRef.current = { ts: photo.uploadedAt, filename: photo.filename };
+    }
   }, []);
 
   // Saca una foto de la lista (usado por el panel de admin al borrarla)
@@ -73,17 +102,21 @@ export function usePhotos() {
     const interval = setInterval(async () => {
       if (newestSeenRef.current == null) return;
       try {
-        const nuevas = await fetchNewerPhotos(newestSeenRef.current);
+        const nuevas = await fetchNewerPhotos(
+          newestSeenRef.current.ts,
+          newestSeenRef.current.filename
+        );
         if (nuevas.length > 0) {
           setPhotos((prev) => {
             const existentes = new Set(prev.map((p) => p.filename));
             const aAgregar = nuevas.filter((p) => !existentes.has(p.filename));
             return [...aAgregar, ...prev];
           });
-          newestSeenRef.current = Math.max(
-            newestSeenRef.current,
-            ...nuevas.map((p) => p.uploadedAt)
-          );
+          // La mas nueva de la tanda queda primera en "nuevas" (vienen ordenadas desc)
+          const masNueva = nuevas[0];
+          if (masNueva.uploadedAt >= newestSeenRef.current.ts) {
+            newestSeenRef.current = { ts: masNueva.uploadedAt, filename: masNueva.filename };
+          }
         }
       } catch (err) {
         console.error(err);

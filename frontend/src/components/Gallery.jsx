@@ -88,6 +88,17 @@ export default function Gallery({ photos, loadingInitial, loadingMore, hasMore, 
         )}
       </div>
 
+      {/* Respaldo manual: si por lo que sea el scroll automático no dispara
+          la carga (navegador raro, conexión lenta, etc.), este botón
+          siempre funciona. */}
+      {hasMore && !loadingMore && (
+        <div className="text-center">
+          <button className="btn-cargar-mas" onClick={onLoadMore}>
+            Cargar más fotos
+          </button>
+        </div>
+      )}
+
       <Modal show={!!selected} onHide={() => setSelected(null)} centered size="lg" className="modal-lightbox">
         <Modal.Body className="p-0" style={{ background: "#000" }}>
           {selected && (

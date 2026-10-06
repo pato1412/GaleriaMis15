@@ -9,18 +9,26 @@ export function getPhotoUrl(relativeUrl) {
 }
 
 // Carga inicial o "cargar mas viejas" (scroll hacia abajo).
-// Sin cursor -> trae las mas recientes. Con cursor -> trae las anteriores a esa fecha.
-export async function fetchPhotos({ before, limit = 20 } = {}) {
+// Sin cursor -> trae las mas recientes. Con cursor -> trae las siguientes a
+// esa foto. El cursor es (fecha, nombre de archivo): el nombre desempata
+// cuando dos fotos quedaron con la misma fecha de modificacion (por
+// ejemplo si se copiaron varias juntas a la carpeta), para que la
+// paginacion nunca se quede trabada repitiendo o saltandose fotos.
+export async function fetchPhotos({ before, beforeFile, limit = 20 } = {}) {
   const params = new URLSearchParams({ limit: String(limit) });
-  if (before) params.set("before", String(before));
+  if (before) {
+    params.set("before", String(before));
+    if (beforeFile) params.set("beforeFile", beforeFile);
+  }
   const res = await fetch(`${API_BASE}/GetFotos?${params.toString()}`);
   if (!res.ok) throw new Error("No se pudieron cargar las fotos");
   return res.json(); // { items, hasMore }
 }
 
 // Sondeo de fotos nuevas subidas por otros invitados desde la ultima vez.
-export async function fetchNewerPhotos(after) {
+export async function fetchNewerPhotos(after, afterFile) {
   const params = new URLSearchParams({ after: String(after) });
+  if (afterFile) params.set("afterFile", afterFile);
   const res = await fetch(`${API_BASE}/GetFotos?${params.toString()}`);
   if (!res.ok) throw new Error("No se pudieron cargar fotos nuevas");
   const data = await res.json();

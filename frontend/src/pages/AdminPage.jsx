@@ -171,6 +171,14 @@ function AdminGallery({ password }) {
             {loadingMore && <Spinner animation="border" size="sm" variant="danger" />}
             {!hasMore && <span className="text-muted small">No hay más fotos.</span>}
           </div>
+
+          {hasMore && !loadingMore && (
+            <div className="text-center">
+              <button className="btn-cargar-mas" onClick={loadMore}>
+                Cargar más fotos
+              </button>
+            </div>
+          )}
         </>
       )}
 
